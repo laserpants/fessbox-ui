@@ -16,6 +16,12 @@ export function acceptCall(line) {
   }
 }
 
+export function rejectCall(line) {
+  return {
+    type: 'reject-call', line
+  }
+}
+
 export function mute(line) {
   return {
     type : 'mute-call', line

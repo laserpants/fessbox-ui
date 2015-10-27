@@ -179,7 +179,7 @@ var LineWidget = (function (_React$Component2) {
           _react2['default'].createElement(
             'button',
             { onClick: function () {
-                dispatch((0, _actions.updateLine)(index, { callState: 'free' }));
+                dispatch((0, _actions.rejectCall)(index));
               } },
             'Reject'
           )
@@ -282,11 +282,8 @@ module.exports = exports['default'];
  dispatch(forwardCall())
 */ /*
     Later, this will become something like
-    dispatch(rejectCall())
-   */ /*
-       Later, this will become something like
-       dispatch(hangUp())
-      */
+    dispatch(hangUp())
+   */
 
 },{"./actions":3,"react":170}],2:[function(require,module,exports){
 'use strict';
@@ -359,6 +356,7 @@ Object.defineProperty(exports, '__esModule', {
 exports.updateLine = updateLine;
 exports.addLine = addLine;
 exports.acceptCall = acceptCall;
+exports.rejectCall = rejectCall;
 exports.mute = mute;
 exports.unMute = unMute;
 
@@ -377,6 +375,12 @@ function addLine() {
 function acceptCall(line) {
   return {
     type: 'accept-call', line: line
+  };
+}
+
+function rejectCall(line) {
+  return {
+    type: 'reject-call', line: line
   };
 }
 
@@ -543,7 +547,9 @@ function mixer(state, action) {
         })
       });
     case 'reject-call':
-    // @todo
+      return _extends({}, state, {
+        lines: lineState(state.lines, action.line, { callState: 'free' })
+      });
     case 'forward-call':
     // @todo
     case 'hang-up':

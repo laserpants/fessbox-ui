@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { updateLine, acceptCall, mute, unMute }
+import { updateLine, acceptCall, rejectCall, mute, unMute }
   from './actions'
 
 class CallDuration extends React.Component {
@@ -75,9 +75,7 @@ class LineWidget extends React.Component {
     if ('incoming' === state) {
       return (
         <div>
-          <button onClick={() => {
-            dispatch(acceptCall(index)) 
-          }}>Answer</button>
+          <button onClick={() => { dispatch(acceptCall(index)) }}>Answer</button>
           <button>Whisper mode</button>
           <button onClick={() => {
             dispatch(updateLine(index, { callState: 'free' })) 
@@ -86,13 +84,7 @@ class LineWidget extends React.Component {
             Later, this will become something like
             dispatch(forwardCall())
           */}
-          <button onClick={() => {
-            dispatch(updateLine(index, { callState: 'free' })) 
-          }}>Reject</button>
-          {/*
-            Later, this will become something like
-            dispatch(rejectCall())
-          */}
+          <button onClick={() => { dispatch(rejectCall(index)) }}>Reject</button>
         </div>
       )
     } else if ('live' === state) {

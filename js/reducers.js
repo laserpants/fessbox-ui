@@ -43,7 +43,10 @@ function mixer(state = initialMixerState, action) {
         })
       }
     case 'reject-call':
-      // @todo
+      return {
+        ...state,
+        lines : lineState(state.lines, action.line, { callState : 'free' })
+      }
     case 'forward-call':
       // @todo
     case 'hang-up':
