@@ -36,7 +36,7 @@ class CallDuration extends React.Component {
     const hours = moment(now).diff(startTime, 'hours')
     return (
       <span>
-       {hours > 0 && (<span>{hours}:)</span>)}{moment(moment(now).diff(startTime)).format('mm:ss')}
+       {hours > 0 && <span>{hours}:)</span>}{moment(moment(now).diff(startTime)).format('mm:ss')}
       </span>
     )
   }
@@ -46,24 +46,22 @@ class LineWidget extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      callerFormVisible : false
+      modal : null
     }
-    this.showCallerInfoForm = this.showCallerInfoForm.bind(this)
-    this.hideCallerInfoForm = this.hideCallerInfoForm.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.updateCaller = this.updateCaller.bind(this)
+    this.showModal = this.showModal.bind(this)
+    this.hideModal = this.hideModal.bind(this)
   }
-  showCallerInfoForm() {
-    const { dispatch, caller } = this.props
-    this.setState({ callerFormVisible : true })
-    dispatch(initialize('caller', caller))
+  showModal(modal) {
+    this.setState({ modal })
   }
-  hideCallerInfoForm() {
-    this.setState({ callerFormVisible : false })
+  hideModal() {
+    this.setState({ modal : null })
   }
-  handleSubmit(data) {
+  updateCaller(data) {
     const { dispatch, index } = this.props
     dispatch(updateCallerInfo(index, data))
-    this.hideCallerInfoForm()
+    this.hideModal()
   }
   renderNotification(state) {
     const { dispatch, index } = this.props
@@ -133,28 +131,53 @@ class LineWidget extends React.Component {
           ) : (
             <button onClick={() => { dispatch(mute(index)) }}>Mute</button>
           )}
-          <button onClick={this.showCallerInfoForm}>Edit contact</button>
+          <button onClick={() => this.showModal('edit-caller')}>Edit contact</button>
         </div>
       )
     } else if ('free' === state) {
       return (
         <div>
-          <button>Dial number</button>
-          <button>Call contact</button>
+          <button onClick={() => this.showModal('dial')}>Dial number</button>
+          <button onClick={() => this.showModal('phonebook')}>Call contact</button>
         </div>
       )
     } else {
       throw `Invalid call state : ${state}`
     }
   }
+  renderModal() {
+    const { modal } = this.state
+    if ('edit-caller' === modal) {
+      return (
+        <CallerInfoForm onSubmit={this.updateCaller} onHide={this.hideModal} />
+      )
+    } else if ('dial' === modal) {
+      return (
+        <div style={{border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px'}}>
+          <p>
+            Dial
+          </p>
+          <a style={{float: 'right'}} href='#' onClick={e => { e.preventDefault(); this.hideModal() }}>[ X ] Hide</a>
+        </div>
+      )
+    } else if ('phonebook' === modal) {
+      return (
+        <div style={{border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px'}}>
+          <p>
+            Phone book
+          </p>
+          <a style={{float: 'right'}} href='#' onClick={e => { e.preventDefault(); this.hideModal() }}>[ X ] Hide</a>
+        </div>
+      )
+    } else {
+      return <span />
+    }
+  }
   render() {
     const { index, callState, isHost, dispatch } = this.props
-    const { callerFormVisible } = this.state
     return (
       <div style={{border: '1px solid #ddd'}}>
-        {true === callerFormVisible && (
-          <CallerInfoForm onSubmit={this.handleSubmit} onHide={this.hideCallerInfoForm} />
-        )}
+        {this.renderModal()}
         <div>
           Line #{index+1}
           {true === isHost && (

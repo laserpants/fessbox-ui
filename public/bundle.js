@@ -212,44 +212,39 @@ var LineWidget = (function (_React$Component2) {
 
     _get(Object.getPrototypeOf(LineWidget.prototype), 'constructor', this).call(this, props);
     this.state = {
-      callerFormVisible: false
+      modal: null
     };
-    this.showCallerInfoForm = this.showCallerInfoForm.bind(this);
-    this.hideCallerInfoForm = this.hideCallerInfoForm.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.updateCaller = this.updateCaller.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
   }
 
   _createClass(LineWidget, [{
-    key: 'showCallerInfoForm',
-    value: function showCallerInfoForm() {
+    key: 'showModal',
+    value: function showModal(modal) {
+      this.setState({ modal: modal });
+    }
+  }, {
+    key: 'hideModal',
+    value: function hideModal() {
+      this.setState({ modal: null });
+    }
+  }, {
+    key: 'updateCaller',
+    value: function updateCaller(data) {
       var _props = this.props;
       var dispatch = _props.dispatch;
-      var caller = _props.caller;
-
-      this.setState({ callerFormVisible: true });
-      dispatch((0, _reduxForm.initialize)('caller', caller));
-    }
-  }, {
-    key: 'hideCallerInfoForm',
-    value: function hideCallerInfoForm() {
-      this.setState({ callerFormVisible: false });
-    }
-  }, {
-    key: 'handleSubmit',
-    value: function handleSubmit(data) {
-      var _props2 = this.props;
-      var dispatch = _props2.dispatch;
-      var index = _props2.index;
+      var index = _props.index;
 
       dispatch((0, _actions.updateCallerInfo)(index, data));
-      this.hideCallerInfoForm();
+      this.hideModal();
     }
   }, {
     key: 'renderNotification',
     value: function renderNotification(state) {
-      var _props3 = this.props;
-      var dispatch = _props3.dispatch;
-      var index = _props3.index;
+      var _props2 = this.props;
+      var dispatch = _props2.dispatch;
+      var index = _props2.index;
 
       if ('incoming' === state) {
         var phoneNumber = this.props.phoneNumber;
@@ -269,9 +264,9 @@ var LineWidget = (function (_React$Component2) {
           )
         );
       } else if ('live' === state) {
-        var _props4 = this.props;
-        var caller = _props4.caller;
-        var startTime = _props4.startTime;
+        var _props3 = this.props;
+        var caller = _props3.caller;
+        var startTime = _props3.startTime;
 
         return _react2['default'].createElement(
           'div',
@@ -310,10 +305,12 @@ var LineWidget = (function (_React$Component2) {
   }, {
     key: 'renderActions',
     value: function renderActions(state) {
-      var _props5 = this.props;
-      var dispatch = _props5.dispatch;
-      var index = _props5.index;
-      var muted = _props5.muted;
+      var _this2 = this;
+
+      var _props4 = this.props;
+      var dispatch = _props4.dispatch;
+      var index = _props4.index;
+      var muted = _props4.muted;
 
       if ('incoming' === state) {
         return _react2['default'].createElement(
@@ -377,7 +374,9 @@ var LineWidget = (function (_React$Component2) {
           ),
           _react2['default'].createElement(
             'button',
-            { onClick: this.showCallerInfoForm },
+            { onClick: function () {
+                return _this2.showModal('edit-caller');
+              } },
             'Edit contact'
           )
         );
@@ -387,12 +386,16 @@ var LineWidget = (function (_React$Component2) {
           null,
           _react2['default'].createElement(
             'button',
-            null,
+            { onClick: function () {
+                return _this2.showModal('dial');
+              } },
             'Dial number'
           ),
           _react2['default'].createElement(
             'button',
-            null,
+            { onClick: function () {
+                return _this2.showModal('phonebook');
+              } },
             'Call contact'
           )
         );
@@ -401,19 +404,65 @@ var LineWidget = (function (_React$Component2) {
       }
     }
   }, {
+    key: 'renderModal',
+    value: function renderModal() {
+      var _this3 = this;
+
+      var modal = this.state.modal;
+
+      if ('edit-caller' === modal) {
+        return _react2['default'].createElement(_CallerInfoForm2['default'], { onSubmit: this.updateCaller, onHide: this.hideModal });
+      } else if ('dial' === modal) {
+        return _react2['default'].createElement(
+          'div',
+          { style: { border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px' } },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Dial'
+          ),
+          _react2['default'].createElement(
+            'a',
+            { style: { float: 'right' }, href: '#', onClick: function (e) {
+                e.preventDefault();_this3.hideModal();
+              } },
+            '[ X ] Hide'
+          )
+        );
+      } else if ('phonebook' === modal) {
+        return _react2['default'].createElement(
+          'div',
+          { style: { border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px' } },
+          _react2['default'].createElement(
+            'p',
+            null,
+            'Phone book'
+          ),
+          _react2['default'].createElement(
+            'a',
+            { style: { float: 'right' }, href: '#', onClick: function (e) {
+                e.preventDefault();_this3.hideModal();
+              } },
+            '[ X ] Hide'
+          )
+        );
+      } else {
+        return _react2['default'].createElement('span', null);
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _props6 = this.props;
-      var index = _props6.index;
-      var callState = _props6.callState;
-      var isHost = _props6.isHost;
-      var dispatch = _props6.dispatch;
-      var callerFormVisible = this.state.callerFormVisible;
+      var _props5 = this.props;
+      var index = _props5.index;
+      var callState = _props5.callState;
+      var isHost = _props5.isHost;
+      var dispatch = _props5.dispatch;
 
       return _react2['default'].createElement(
         'div',
         { style: { border: '1px solid #ddd' } },
-        true === callerFormVisible && _react2['default'].createElement(_CallerInfoForm2['default'], { onSubmit: this.handleSubmit, onHide: this.hideCallerInfoForm }),
+        this.renderModal(),
         _react2['default'].createElement(
           'div',
           null,
