@@ -10,6 +10,12 @@ export function addLine() {
   }
 }
 
+export function acceptCall(line) {
+  return {
+    type: 'accept-call', line
+  }
+}
+
 export function mute(line) {
   return {
     type : 'mute-call', line
