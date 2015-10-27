@@ -1,7 +1,41 @@
 import React from 'react'
 
-import { updateLine, mute, unMute }
+import { updateLine, acceptCall, mute, unMute }
   from './actions'
+
+class CallDuration extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      now   : new Date().getTime(),
+      timer : null
+    }
+  }
+  componentDidMount() {
+    this.setState({
+      timer : setInterval(() => {
+        this.setState({
+          now : new Date().getTime()
+        })
+      }, 1000)
+    })
+  }
+  componentWillUnmount() {
+    const { timer } = this.state
+    if (timer) {
+      clearInterval(timer)
+    }
+  }
+  render() {
+    const { now } = this.state
+    const { startTime } = this.props
+    return (
+      <span>
+        {now - startTime}
+      </span>
+    )
+  }
+}
 
 class LineWidget extends React.Component {
   constructor(props) {
@@ -18,12 +52,12 @@ class LineWidget extends React.Component {
         </div>
       )
     } else if ('live' === state) {
-      const { caller } = this.props
+      const { caller, startTime } = this.props
       return (
         <div>
           <h2>On Air</h2>
           <h3>{caller}</h3>
-          <p>Call duration: XX:XX:XXX</p>
+          <p>Call duration: <CallDuration startTime={startTime}/></p>
         </div>
       )
     } else if ('free' === state) {
@@ -42,16 +76,8 @@ class LineWidget extends React.Component {
       return (
         <div>
           <button onClick={() => {
-            dispatch(updateLine(index, { 
-              callState  : 'live',
-              caller     : 'Justin Trudeau - Berlin',
-              muted      : false
-            })) 
+            dispatch(acceptCall(index)) 
           }}>Answer</button>
-          {/*
-            Later, this will become something like
-            dispatch(acceptCall())
-          */}
           <button>Whisper mode</button>
           <button onClick={() => {
             dispatch(updateLine(index, { callState: 'free' })) 
