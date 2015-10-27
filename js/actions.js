@@ -33,3 +33,9 @@ export function unMute(line) {
     type : 'unmute-call', line
   }
 }
+
+export function updateCallerInfo(line, caller) {
+  return {
+    type : 'update-caller-info', line, caller
+  }
+}

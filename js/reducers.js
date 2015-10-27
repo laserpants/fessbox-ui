@@ -1,5 +1,7 @@
 import { combineReducers } 
   from 'redux'
+import { reducer as formReducer }
+  from 'redux-form'
 
 const initialMixerState = {
   lines : [
@@ -61,13 +63,19 @@ function mixer(state = initialMixerState, action) {
         ...state,
         lines : lineState(state.lines, action.line, { muted : false })
       }
+    case 'update-caller-info':
+      return {
+        ...state,
+        lines : lineState(state.lines, action.line, { caller : action.caller })
+      }
     default:
       return state
   }
 }
 
 const reducers = {
-  mixer
+  mixer,
+  form : formReducer
 }
 
 export default combineReducers(reducers)

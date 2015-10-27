@@ -1,30 +1,11 @@
 import React  from 'react'
 import moment from 'moment'
+import CallerInfoForm from './CallerInfoForm'
 
-import { updateLine, acceptCall, rejectCall, mute, unMute }
+import { updateLine, acceptCall, rejectCall, mute, unMute, updateCallerInfo }
   from './actions'
-
-class CallerInfoForm extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <div style={{border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px'}}>
-        <a style={{float: 'right'}} href='#' onClick={e => { e.preventDefault(); this.props.onHide() }}>[ X ] Hide</a>
-        <div>
-          <label>Name</label>
-        </div>
-        <div>
-          <input type='text' />
-        </div>
-        <div>
-          <button>Submit</button>
-        </div>
-      </div>
-    )
-  }
-}
+import { initialize } 
+  from 'redux-form'
 
 class CallDuration extends React.Component {
   constructor(props) {
@@ -52,9 +33,10 @@ class CallDuration extends React.Component {
   render() {
     const { now } = this.state
     const { startTime } = this.props
+    const hours = moment(now).diff(startTime, 'hours')
     return (
       <span>
-        {moment(moment(now).diff(startTime)).format('mm:ss')}
+       {hours > 0 && (<span>{hours}:)</span>)}{moment(moment(now).diff(startTime)).format('mm:ss')}
       </span>
     )
   }
@@ -68,12 +50,20 @@ class LineWidget extends React.Component {
     }
     this.showCallerInfoForm = this.showCallerInfoForm.bind(this)
     this.hideCallerInfoForm = this.hideCallerInfoForm.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
   showCallerInfoForm() {
+    const { dispatch, caller } = this.props
     this.setState({ callerFormVisible : true })
+    dispatch(initialize('caller', caller))
   }
   hideCallerInfoForm() {
     this.setState({ callerFormVisible : false })
+  }
+  handleSubmit(data) {
+    const { dispatch, index } = this.props
+    dispatch(updateCallerInfo(index, data))
+    this.hideCallerInfoForm()
   }
   renderNotification(state) {
     const { dispatch, index } = this.props
@@ -90,7 +80,9 @@ class LineWidget extends React.Component {
       return (
         <div>
           <h2>On Air</h2>
-          <h3>{caller}</h3>
+          {caller && (
+            <h3>{caller.name}</h3>
+          )}
           <p>Call duration: <CallDuration startTime={startTime}/></p>
         </div>
       )
@@ -161,7 +153,7 @@ class LineWidget extends React.Component {
     return (
       <div style={{border: '1px solid #ddd'}}>
         {true === callerFormVisible && (
-          <CallerInfoForm onHide={this.hideCallerInfoForm} />
+          <CallerInfoForm onSubmit={this.handleSubmit} onHide={this.hideCallerInfoForm} />
         )}
         <div>
           Line #{index+1}
