@@ -33,6 +33,13 @@ var CallerInfoForm = (function (_React$Component) {
   }
 
   _createClass(CallerInfoForm, [{
+    key: 'hasErrors',
+    value: function hasErrors() {
+      var errors = this.props.errors;
+
+      return errors && Object.keys(errors).length;
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _props = this.props;
@@ -78,7 +85,7 @@ var CallerInfoForm = (function (_React$Component) {
             null,
             _react2['default'].createElement(
               'button',
-              { onClick: handleSubmit, disabled: !!name.error },
+              { onClick: handleSubmit, disabled: this.hasErrors() },
               'Submit'
             )
           )

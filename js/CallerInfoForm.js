@@ -7,6 +7,10 @@ class CallerInfoForm extends React.Component {
   constructor(props) {
     super(props)
   }
+  hasErrors() {
+    const { errors } = this.props
+    return errors && Object.keys(errors).length
+  }
   render() {
     const {
       fields : { name },
@@ -26,7 +30,7 @@ class CallerInfoForm extends React.Component {
             {name.touched && name.error && <div>{name.error}</div>}
           </div>
           <div>
-            <button onClick={handleSubmit} disabled={!!name.error}>Submit</button>
+            <button onClick={handleSubmit} disabled={this.hasErrors()}>Submit</button>
           </div>
         </form>
       </div>
