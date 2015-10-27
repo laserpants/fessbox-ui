@@ -33,7 +33,15 @@ function mixer(state = initialMixerState, action) {
         lines : lineState(state.lines, action.line, action.state)
       }
     case 'accept-call':
-      // @todo
+      return {
+        ...state,
+        lines : lineState(state.lines, action.line, {
+          callState : 'live',
+          caller    : null,
+          muted     : false,
+          startTime : new Date().getTime()
+        })
+      }
     case 'reject-call':
       // @todo
     case 'forward-call':
