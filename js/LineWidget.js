@@ -1,4 +1,5 @@
-import React from 'react'
+import React  from 'react'
+import moment from 'moment'
 
 import { updateLine, acceptCall, rejectCall, mute, unMute }
   from './actions'
@@ -31,7 +32,7 @@ class CallDuration extends React.Component {
     const { startTime } = this.props
     return (
       <span>
-        {now - startTime}
+        {moment(moment(now).diff(startTime)).format('mm:ss')}
       </span>
     )
   }
