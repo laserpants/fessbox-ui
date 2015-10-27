@@ -4,6 +4,28 @@ import moment from 'moment'
 import { updateLine, acceptCall, rejectCall, mute, unMute }
   from './actions'
 
+class CallerInfoForm extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <div style={{border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px'}}>
+        <a style={{float: 'right'}} href='#' onClick={e => { e.preventDefault(); this.props.onHide() }}>[ X ] Hide</a>
+        <div>
+          <label>Name</label>
+        </div>
+        <div>
+          <input type='text' />
+        </div>
+        <div>
+          <button>Submit</button>
+        </div>
+      </div>
+    )
+  }
+}
+
 class CallDuration extends React.Component {
   constructor(props) {
     super(props)
@@ -41,6 +63,17 @@ class CallDuration extends React.Component {
 class LineWidget extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      callerFormVisible : false
+    }
+    this.showCallerInfoForm = this.showCallerInfoForm.bind(this)
+    this.hideCallerInfoForm = this.hideCallerInfoForm.bind(this)
+  }
+  showCallerInfoForm() {
+    this.setState({ callerFormVisible : true })
+  }
+  hideCallerInfoForm() {
+    this.setState({ callerFormVisible : false })
   }
   renderNotification(state) {
     const { dispatch, index } = this.props
@@ -108,7 +141,7 @@ class LineWidget extends React.Component {
           ) : (
             <button onClick={() => { dispatch(mute(index)) }}>Mute</button>
           )}
-          <button>Edit contact</button>
+          <button onClick={this.showCallerInfoForm}>Edit contact</button>
         </div>
       )
     } else if ('free' === state) {
@@ -124,8 +157,12 @@ class LineWidget extends React.Component {
   }
   render() {
     const { index, callState, isHost, dispatch } = this.props
+    const { callerFormVisible } = this.state
     return (
       <div style={{border: '1px solid #ddd'}}>
+        {true === callerFormVisible && (
+          <CallerInfoForm onHide={this.hideCallerInfoForm} />
+        )}
         <div>
           Line #{index+1}
           {true === isHost && (

@@ -25,8 +25,62 @@ var _moment2 = _interopRequireDefault(_moment);
 
 var _actions = require('./actions');
 
-var CallDuration = (function (_React$Component) {
-  _inherits(CallDuration, _React$Component);
+var CallerInfoForm = (function (_React$Component) {
+  _inherits(CallerInfoForm, _React$Component);
+
+  function CallerInfoForm(props) {
+    _classCallCheck(this, CallerInfoForm);
+
+    _get(Object.getPrototypeOf(CallerInfoForm.prototype), 'constructor', this).call(this, props);
+  }
+
+  _createClass(CallerInfoForm, [{
+    key: 'render',
+    value: function render() {
+      var _this = this;
+
+      return _react2['default'].createElement(
+        'div',
+        { style: { border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px' } },
+        _react2['default'].createElement(
+          'a',
+          { style: { float: 'right' }, href: '#', onClick: function (e) {
+              e.preventDefault();_this.props.onHide();
+            } },
+          '[ X ] Hide'
+        ),
+        _react2['default'].createElement(
+          'div',
+          null,
+          _react2['default'].createElement(
+            'label',
+            null,
+            'Name'
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          null,
+          _react2['default'].createElement('input', { type: 'text' })
+        ),
+        _react2['default'].createElement(
+          'div',
+          null,
+          _react2['default'].createElement(
+            'button',
+            null,
+            'Submit'
+          )
+        )
+      );
+    }
+  }]);
+
+  return CallerInfoForm;
+})(_react2['default'].Component);
+
+var CallDuration = (function (_React$Component2) {
+  _inherits(CallDuration, _React$Component2);
 
   function CallDuration(props) {
     _classCallCheck(this, CallDuration);
@@ -41,11 +95,11 @@ var CallDuration = (function (_React$Component) {
   _createClass(CallDuration, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this = this;
+      var _this2 = this;
 
       this.setState({
         timer: setInterval(function () {
-          _this.setState({
+          _this2.setState({
             now: new Date().getTime()
           });
         }, 1000)
@@ -77,16 +131,31 @@ var CallDuration = (function (_React$Component) {
   return CallDuration;
 })(_react2['default'].Component);
 
-var LineWidget = (function (_React$Component2) {
-  _inherits(LineWidget, _React$Component2);
+var LineWidget = (function (_React$Component3) {
+  _inherits(LineWidget, _React$Component3);
 
   function LineWidget(props) {
     _classCallCheck(this, LineWidget);
 
     _get(Object.getPrototypeOf(LineWidget.prototype), 'constructor', this).call(this, props);
+    this.state = {
+      callerFormVisible: false
+    };
+    this.showCallerInfoForm = this.showCallerInfoForm.bind(this);
+    this.hideCallerInfoForm = this.hideCallerInfoForm.bind(this);
   }
 
   _createClass(LineWidget, [{
+    key: 'showCallerInfoForm',
+    value: function showCallerInfoForm() {
+      this.setState({ callerFormVisible: true });
+    }
+  }, {
+    key: 'hideCallerInfoForm',
+    value: function hideCallerInfoForm() {
+      this.setState({ callerFormVisible: false });
+    }
+  }, {
     key: 'renderNotification',
     value: function renderNotification(state) {
       var _props = this.props;
@@ -219,7 +288,7 @@ var LineWidget = (function (_React$Component2) {
           ),
           _react2['default'].createElement(
             'button',
-            null,
+            { onClick: this.showCallerInfoForm },
             'Edit contact'
           )
         );
@@ -250,10 +319,12 @@ var LineWidget = (function (_React$Component2) {
       var callState = _props4.callState;
       var isHost = _props4.isHost;
       var dispatch = _props4.dispatch;
+      var callerFormVisible = this.state.callerFormVisible;
 
       return _react2['default'].createElement(
         'div',
         { style: { border: '1px solid #ddd' } },
+        true === callerFormVisible && _react2['default'].createElement(CallerInfoForm, { onHide: this.hideCallerInfoForm }),
         _react2['default'].createElement(
           'div',
           null,
