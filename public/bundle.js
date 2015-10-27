@@ -21,8 +21,60 @@ var _react2 = _interopRequireDefault(_react);
 
 var _actions = require('./actions');
 
-var LineWidget = (function (_React$Component) {
-  _inherits(LineWidget, _React$Component);
+var CallDuration = (function (_React$Component) {
+  _inherits(CallDuration, _React$Component);
+
+  function CallDuration(props) {
+    _classCallCheck(this, CallDuration);
+
+    _get(Object.getPrototypeOf(CallDuration.prototype), 'constructor', this).call(this, props);
+    this.state = {
+      now: new Date().getTime(),
+      timer: null
+    };
+  }
+
+  _createClass(CallDuration, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this = this;
+
+      this.setState({
+        timer: setInterval(function () {
+          _this.setState({
+            now: new Date().getTime()
+          });
+        }, 1000)
+      });
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      var timer = this.state.timer;
+
+      if (timer) {
+        clearInterval(timer);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var now = this.state.now;
+      var startTime = this.props.startTime;
+
+      return _react2['default'].createElement(
+        'span',
+        null,
+        now - startTime
+      );
+    }
+  }]);
+
+  return CallDuration;
+})(_react2['default'].Component);
+
+var LineWidget = (function (_React$Component2) {
+  _inherits(LineWidget, _React$Component2);
 
   function LineWidget(props) {
     _classCallCheck(this, LineWidget);
@@ -55,7 +107,9 @@ var LineWidget = (function (_React$Component) {
           )
         );
       } else if ('live' === state) {
-        var caller = this.props.caller;
+        var _props2 = this.props;
+        var caller = _props2.caller;
+        var startTime = _props2.startTime;
 
         return _react2['default'].createElement(
           'div',
@@ -73,7 +127,8 @@ var LineWidget = (function (_React$Component) {
           _react2['default'].createElement(
             'p',
             null,
-            'Call duration: XX:XX:XXX'
+            'Call duration: ',
+            _react2['default'].createElement(CallDuration, { startTime: startTime })
           )
         );
       } else if ('free' === state) {
@@ -93,10 +148,10 @@ var LineWidget = (function (_React$Component) {
   }, {
     key: 'renderActions',
     value: function renderActions(state) {
-      var _props2 = this.props;
-      var dispatch = _props2.dispatch;
-      var index = _props2.index;
-      var muted = _props2.muted;
+      var _props3 = this.props;
+      var dispatch = _props3.dispatch;
+      var index = _props3.index;
+      var muted = _props3.muted;
 
       if ('incoming' === state) {
         return _react2['default'].createElement(
@@ -105,11 +160,7 @@ var LineWidget = (function (_React$Component) {
           _react2['default'].createElement(
             'button',
             { onClick: function () {
-                dispatch((0, _actions.updateLine)(index, {
-                  callState: 'live',
-                  caller: 'Justin Trudeau - Berlin',
-                  muted: false
-                }));
+                dispatch((0, _actions.acceptCall)(index));
               } },
             'Answer'
           ),
@@ -190,11 +241,11 @@ var LineWidget = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _props3 = this.props;
-      var index = _props3.index;
-      var callState = _props3.callState;
-      var isHost = _props3.isHost;
-      var dispatch = _props3.dispatch;
+      var _props4 = this.props;
+      var index = _props4.index;
+      var callState = _props4.callState;
+      var isHost = _props4.isHost;
+      var dispatch = _props4.dispatch;
 
       return _react2['default'].createElement(
         'div',
@@ -228,17 +279,14 @@ exports['default'] = LineWidget;
 module.exports = exports['default'];
 /*
  Later, this will become something like
- dispatch(acceptCall())
+ dispatch(forwardCall())
 */ /*
     Later, this will become something like
-    dispatch(forwardCall())
+    dispatch(rejectCall())
    */ /*
        Later, this will become something like
-       dispatch(rejectCall())
-      */ /*
-          Later, this will become something like
-          dispatch(hangUp())
-         */
+       dispatch(hangUp())
+      */
 
 },{"./actions":3,"react":170}],2:[function(require,module,exports){
 'use strict';
@@ -310,6 +358,7 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.updateLine = updateLine;
 exports.addLine = addLine;
+exports.acceptCall = acceptCall;
 exports.mute = mute;
 exports.unMute = unMute;
 
@@ -322,6 +371,12 @@ function updateLine(line, state) {
 function addLine() {
   return {
     type: 'add-line'
+  };
+}
+
+function acceptCall(line) {
+  return {
+    type: 'accept-call', line: line
   };
 }
 
@@ -479,7 +534,14 @@ function mixer(state, action) {
         lines: lineState(state.lines, action.line, action.state)
       });
     case 'accept-call':
-    // @todo
+      return _extends({}, state, {
+        lines: lineState(state.lines, action.line, {
+          callState: 'live',
+          caller: null,
+          muted: false,
+          startTime: new Date().getTime()
+        })
+      });
     case 'reject-call':
     // @todo
     case 'forward-call':
