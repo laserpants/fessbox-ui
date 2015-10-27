@@ -72,6 +72,11 @@ class LineWidget extends React.Component {
     } else if ('live' === state) {
       return (
         <div>
+          {true === muted && (
+            <div style={{float: 'right'}}>
+              Muted
+            </div>
+          )}
           <button onClick={() => { 
             dispatch(updateLine(index, { callState: 'free' })) 
           }}>Hang up</button>

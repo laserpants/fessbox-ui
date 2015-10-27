@@ -137,6 +137,11 @@ var LineWidget = (function (_React$Component) {
         return _react2['default'].createElement(
           'div',
           null,
+          true === muted && _react2['default'].createElement(
+            'div',
+            { style: { float: 'right' } },
+            'Muted'
+          ),
           _react2['default'].createElement(
             'button',
             { onClick: function () {
