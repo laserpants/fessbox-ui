@@ -1,6 +1,8 @@
-import React  from 'react'
-import moment from 'moment'
+import React          from 'react'
+import moment         from 'moment'
 import CallerInfoForm from './CallerInfoForm'
+import PhoneBook      from './PhoneBook'
+import DialPad        from './DialPad'
 
 import { updateLine, acceptCall, rejectCall, mute, unMute, updateCallerInfo }
   from './actions'
@@ -36,7 +38,7 @@ class CallDuration extends React.Component {
     const hours = moment(now).diff(startTime, 'hours')
     return (
       <span>
-       {hours > 0 && <span>{hours}:)</span>}{moment(moment(now).diff(startTime)).format('mm:ss')}
+       {hours > 0 && <span>{hours}:</span>}{moment(moment(now).diff(startTime)).format('mm:ss')}
       </span>
     )
   }
@@ -153,21 +155,11 @@ class LineWidget extends React.Component {
       )
     } else if ('dial' === modal) {
       return (
-        <div style={{border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px'}}>
-          <p>
-            Dial
-          </p>
-          <a style={{float: 'right'}} href='#' onClick={e => { e.preventDefault(); this.hideModal() }}>[ X ] Hide</a>
-        </div>
+        <DialPad onHide={this.hideModal} />
       )
     } else if ('phonebook' === modal) {
       return (
-        <div style={{border: '1px solid #ddd', width: '300px', padding: '1em', position: 'absolute', marginLeft: '300px'}}>
-          <p>
-            Phone book
-          </p>
-          <a style={{float: 'right'}} href='#' onClick={e => { e.preventDefault(); this.hideModal() }}>[ X ] Hide</a>
-        </div>
+        <PhoneBook onHide={this.hideModal} />
       )
     } else {
       return <span />
