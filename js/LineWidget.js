@@ -1,6 +1,7 @@
 import React          from 'react'
 import moment         from 'moment'
 import CallerInfoForm from './CallerInfoForm'
+import RejectCallForm from './RejectCallForm'
 import PhoneBook      from './PhoneBook'
 import DialPad        from './DialPad'
 
@@ -51,6 +52,7 @@ class LineWidget extends React.Component {
       modal : null
     }
     this.updateCaller = this.updateCaller.bind(this)
+    this.rejectCall = this.rejectCall.bind(this)
     this.showModal = this.showModal.bind(this)
     this.hideModal = this.hideModal.bind(this)
   }
@@ -67,6 +69,11 @@ class LineWidget extends React.Component {
   updateCaller(data) {
     const { dispatch, index } = this.props
     dispatch(updateCallerInfo(index, data))
+    this.hideModal()
+  }
+  rejectCall() {
+    const { dispatch, index } = this.props
+    dispatch(rejectCall(index))
     this.hideModal()
   }
   renderNotification(state) {
@@ -114,7 +121,7 @@ class LineWidget extends React.Component {
             Later, this will become something like
             dispatch(forwardCall())
           */}
-          <button onClick={() => { dispatch(rejectCall(index)) }}>Reject</button>
+          <button onClick={() => { this.showModal('reject-call') }}>Reject</button>
         </div>
       )
     } else if ('live' === state) {
@@ -166,6 +173,12 @@ class LineWidget extends React.Component {
     } else if ('phonebook' === modal) {
       return (
         <PhoneBook onHide={this.hideModal} />
+      )
+    } else if ('reject-call' === modal) {
+      return (
+        <RejectCallForm 
+          onSubmit      = {this.rejectCall}
+          onHide        = {this.hideModal} />
       )
     } else {
       return <span />
