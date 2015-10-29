@@ -13,7 +13,7 @@ class CallerInfoForm extends React.Component {
   }
   render() {
     const {
-      fields : { name },
+      fields : { name, place },
       handleSubmit,
       resetForm,
       onHide
@@ -28,6 +28,13 @@ class CallerInfoForm extends React.Component {
           <div>
             <input type='text' {...name} />
             {name.touched && name.error && <div>{name.error}</div>}
+          </div>
+          <div>
+            <label>Location</label>
+          </div>
+          <div>
+            <input type='text' {...place} />
+            {place.touched && place.error && <div>{place.error}</div>}
           </div>
           <div>
             <button onClick={handleSubmit} disabled={this.hasErrors()}>Submit</button>
@@ -48,6 +55,6 @@ function validate(data) {
 
 export default reduxForm({
   form   : 'caller',
-  fields : ['name'],
+  fields : ['name', 'place'],
   validate
 })(CallerInfoForm)

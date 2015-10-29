@@ -43,7 +43,9 @@ var CallerInfoForm = (function (_React$Component) {
     key: 'render',
     value: function render() {
       var _props = this.props;
-      var name = _props.fields.name;
+      var _props$fields = _props.fields;
+      var name = _props$fields.name;
+      var place = _props$fields.place;
       var handleSubmit = _props.handleSubmit;
       var resetForm = _props.resetForm;
       var onHide = _props.onHide;
@@ -84,6 +86,25 @@ var CallerInfoForm = (function (_React$Component) {
             'div',
             null,
             _react2['default'].createElement(
+              'label',
+              null,
+              'Location'
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement('input', _extends({ type: 'text' }, place)),
+            place.touched && place.error && _react2['default'].createElement(
+              'div',
+              null,
+              place.error
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(
               'button',
               { onClick: handleSubmit, disabled: this.hasErrors() },
               'Submit'
@@ -107,7 +128,7 @@ function validate(data) {
 
 exports['default'] = (0, _reduxForm.reduxForm)({
   form: 'caller',
-  fields: ['name'],
+  fields: ['name', 'place'],
   validate: validate
 })(CallerInfoForm);
 module.exports = exports['default'];
