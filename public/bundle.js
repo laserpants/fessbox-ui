@@ -290,7 +290,14 @@ var LineWidget = (function (_React$Component2) {
   _createClass(LineWidget, [{
     key: 'showModal',
     value: function showModal(modal) {
+      var _props = this.props;
+      var dispatch = _props.dispatch;
+      var caller = _props.caller;
+
       this.setState({ modal: modal });
+      if ('edit-caller' === modal) {
+        dispatch((0, _reduxForm.initialize)('caller', caller));
+      }
     }
   }, {
     key: 'hideModal',
@@ -300,9 +307,9 @@ var LineWidget = (function (_React$Component2) {
   }, {
     key: 'updateCaller',
     value: function updateCaller(data) {
-      var _props = this.props;
-      var dispatch = _props.dispatch;
-      var index = _props.index;
+      var _props2 = this.props;
+      var dispatch = _props2.dispatch;
+      var index = _props2.index;
 
       dispatch((0, _actions.updateCallerInfo)(index, data));
       this.hideModal();
@@ -310,9 +317,9 @@ var LineWidget = (function (_React$Component2) {
   }, {
     key: 'renderNotification',
     value: function renderNotification(state) {
-      var _props2 = this.props;
-      var dispatch = _props2.dispatch;
-      var index = _props2.index;
+      var _props3 = this.props;
+      var dispatch = _props3.dispatch;
+      var index = _props3.index;
 
       if ('incoming' === state) {
         var phoneNumber = this.props.phoneNumber;
@@ -332,9 +339,9 @@ var LineWidget = (function (_React$Component2) {
           )
         );
       } else if ('live' === state) {
-        var _props3 = this.props;
-        var caller = _props3.caller;
-        var startTime = _props3.startTime;
+        var _props4 = this.props;
+        var caller = _props4.caller;
+        var startTime = _props4.startTime;
 
         return _react2['default'].createElement(
           'div',
@@ -375,10 +382,10 @@ var LineWidget = (function (_React$Component2) {
     value: function renderActions(state) {
       var _this2 = this;
 
-      var _props4 = this.props;
-      var dispatch = _props4.dispatch;
-      var index = _props4.index;
-      var muted = _props4.muted;
+      var _props5 = this.props;
+      var dispatch = _props5.dispatch;
+      var index = _props5.index;
+      var muted = _props5.muted;
 
       if ('incoming' === state) {
         return _react2['default'].createElement(
@@ -477,7 +484,9 @@ var LineWidget = (function (_React$Component2) {
       var modal = this.state.modal;
 
       if ('edit-caller' === modal) {
-        return _react2['default'].createElement(_CallerInfoForm2['default'], { onSubmit: this.updateCaller, onHide: this.hideModal });
+        return _react2['default'].createElement(_CallerInfoForm2['default'], {
+          onSubmit: this.updateCaller,
+          onHide: this.hideModal });
       } else if ('dial' === modal) {
         return _react2['default'].createElement(_DialPad2['default'], { onHide: this.hideModal });
       } else if ('phonebook' === modal) {
@@ -489,11 +498,11 @@ var LineWidget = (function (_React$Component2) {
   }, {
     key: 'render',
     value: function render() {
-      var _props5 = this.props;
-      var index = _props5.index;
-      var callState = _props5.callState;
-      var isHost = _props5.isHost;
-      var dispatch = _props5.dispatch;
+      var _props6 = this.props;
+      var index = _props6.index;
+      var callState = _props6.callState;
+      var isHost = _props6.isHost;
+      var dispatch = _props6.dispatch;
 
       return _react2['default'].createElement(
         'div',

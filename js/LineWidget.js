@@ -55,7 +55,11 @@ class LineWidget extends React.Component {
     this.hideModal = this.hideModal.bind(this)
   }
   showModal(modal) {
+    const { dispatch, caller } = this.props
     this.setState({ modal })
+    if ('edit-caller' === modal) {
+      dispatch(initialize('caller', caller))
+    }
   }
   hideModal() {
     this.setState({ modal : null })
@@ -151,7 +155,9 @@ class LineWidget extends React.Component {
     const { modal } = this.state
     if ('edit-caller' === modal) {
       return (
-        <CallerInfoForm onSubmit={this.updateCaller} onHide={this.hideModal} />
+        <CallerInfoForm 
+          onSubmit      = {this.updateCaller}
+          onHide        = {this.hideModal} />
       )
     } else if ('dial' === modal) {
       return (
